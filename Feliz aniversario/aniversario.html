@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nuestro Amor - 1 año y 3 meses</title>
+    <style>
+        :root {
+            --color-primary: #ff6b6b;
+            --color-secondary: #ffa3a3;
+            --color-accent: #d23669;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to right, #ff9a9e, #fad0c4);
+
+            margin: 0;
+            padding: 0;
+            color: #333;
+            text-align: center;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+        }
+        
+        h1 {
+            color: var(--color-accent);
+            font-size: 2.8em;
+            margin-bottom: 10px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 1s forwards 0.5s;
+        }
+        
+        .subtitle {
+            font-size: 1.3em;
+            margin-bottom: 30px;
+            color: #555;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 1s forwards 0.8s;
+        }
+        
+        .photo-gallery {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin: 30px 0;
+        }
+        
+        .photo {
+            width: 200px;
+            height: 200px;
+            border-radius: 10px;
+            object-fit: cover;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            opacity: 0;
+            transform: scale(0.8);
+        }
+        
+        .photo:hover {
+            transform: scale(1.1) rotate(2deg);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            z-index: 10;
+        }
+        
+        .message {
+            background-color: rgba(255,255,255,0.85);
+            border-radius: 20px;
+            padding: 25px;
+            margin: 40px auto;
+            max-width: 650px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255,255,255,0.3);
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 1s forwards 1.2s;
+        }
+        
+        .heart {
+            color: var(--color-accent);
+            font-size: 1.8em;
+            animation: pulse 1.5s infinite;
+            display: inline-block;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        
+        .heart:hover {
+            transform: scale(1.3);
+        }
+        
+        .heart:active {
+            animation: heartExplode 0.5s forwards;
+        }
+        
+        .counter {
+            font-size: 1.3em;
+            margin: 25px 0;
+            background-color: rgba(255,255,255,0.8);
+            padding: 12px 25px;
+            border-radius: 50px;
+            display: inline-block;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            opacity: 0;
+            animation: fadeIn 1s forwards 1s;
+        }
+        
+        footer {
+            margin-top: 50px;
+            padding: 25px;
+            color: #666;
+            opacity: 0;
+            animation: fadeIn 1s forwards 1.5s;
+        }
+        
+        /* Modal para fotos */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.95);
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal-content {
+            margin: auto;
+            display: block;
+            max-width: 85%;
+            max-height: 85%;
+            margin-top: 5vh;
+            border-radius: 10px;
+            box-shadow: 0 0 40px rgba(255,255,255,0.2);
+            animation: zoomIn 0.4s;
+        }
+        
+        .close {
+            position: absolute;
+            top: 25px;
+            right: 35px;
+            color: white;
+            font-size: 50px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        
+        .close:hover {
+            transform: rotate(90deg);
+            color: var(--color-primary);
+        }
+        
+        /* Reproductor de música */
+        .music-player {
+            margin: 25px auto;
+            background-color: rgba(255,255,255,0.8);
+            padding: 15px 25px;
+            border-radius: 50px;
+            width: 320px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 1s forwards 1s;
+        }
+        
+        .music-player button {
+            background: var(--color-primary);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            box-shadow: 0 4px 10px rgba(210, 54, 105, 0.3);
+        }
+        
+        .music-player button:hover {
+            transform: scale(1.1);
+            background: var(--color-accent);
+        }
+        
+        .music-info {
+            flex-grow: 1;
+            text-align: left;
+            padding-left: 10px;
+        }
+        
+        .music-title {
+            font-weight: bold;
+            font-size: 0.9em;
+            margin-bottom: 3px;
+        }
+        
+        .music-artist {
+            font-size: 0.8em;
+            color: #666;
+        }
+        
+        /* Memory Game */
+        .memory-game-container {
+            margin: 40px auto;
+            max-width: 600px;
+            background: rgba(255,255,255,0.8);
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 1s forwards 1.4s;
+        }
+        
+        .memory-game {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .memory-card {
+            aspect-ratio: 1;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            transform-style: preserve-3d;
+            transform: rotateY(180deg);
+        }
+        
+        .memory-card.flipped {
+            transform: rotateY(0deg);
+            background: white;
+        }
+        
+        .memory-card.matched {
+            transform: rotateY(0deg);
+            background: #4CAF50;
+            cursor: default;
+        }
+        
+        /* Love Letter */
+        .love-letter {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: var(--color-accent);
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            z-index: 50;
+            transition: all 0.3s;
+            opacity: 0;
+            animation: fadeIn 1s forwards 2s, float 3s ease-in-out infinite 2s;
+        }
+        
+        .love-letter:hover {
+            transform: scale(1.1);
+        }
+        
+        .letter-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .letter-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+            animation: letterPop 0.5s;
+            box-shadow: 0 0 30px rgba(255,255,255,0.2);
+        }
+        
+        .close-letter {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 25px;
+            cursor: pointer;
+            color: #666;
+        }
+        
+        /* Confetti */
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background-color: var(--color-primary);
+            opacity: 0;
+            z-index: 999;
+        }
+        
+        /* Animaciones */
+        @keyframes fadeIn {
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes fadeInUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes popIn {
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes heartExplode {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(3); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        @keyframes zoomIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+        
+        @keyframes letterPop {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        
+        /* Efecto de nieve de corazones */
+        .heart-rain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .heart-flake {
+            position: absolute;
+            color: var(--color-primary);
+            animation: falling linear infinite;
+            pointer-events: none;
+        }
+        
+        @keyframes falling {
+            to { transform: translateY(100vh); }
+        }
+        
+        /* Timeline */
+        .timeline {
+            position: relative;
+            max-width: 800px;
+            margin: 40px auto;
+            opacity: 0;
+            animation: fadeIn 1s forwards 1.6s;
+        }
+        
+        .timeline::after {
+            content: '';
+            position: absolute;
+            width: 6px;
+            background: linear-gradient(to bottom, #ff6b6b, #d23669);
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            margin-left: -3px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(210, 54, 105, 0.3);
+        }
+        
+        .timeline-item {
+            padding: 15px 40px;
+            position: relative;
+            width: 50%;
+            box-sizing: border-box;
+            margin-bottom: 40px;
+        }
+        
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            background-color: white;
+            border: 5px solid #d23669;
+            border-radius: 50%;
+            top: 20px;
+            z-index: 1;
+            box-shadow: 0 0 10px rgba(210, 54, 105, 0.5);
+        }
+        
+        .left {
+            left: 0;
+            text-align: right;
+            padding-right: 70px;
+        }
+        
+        .right {
+            left: 50%;
+            text-align: left;
+            padding-left: 70px;
+        }
+        
+        .left::after {
+            right: -15px;
+        }
+        
+        .right::after {
+            left: -15px;
+        }
+        
+        .timeline-content {
+            padding: 25px;
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            position: relative;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .timeline-content:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        }
+        
+        .timeline-date {
+            font-weight: bold;
+            color: #d23669;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        
+        .timeline-icon {
+            position: absolute;
+            font-size: 30px;
+            width: 50px;
+            height: 50px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .left .timeline-icon {
+            right: -70px;
+            top: 15px;
+        }
+        
+        .right .timeline-icon {
+            left: -70px;
+            top: 15px;
+        }
+        
+        .timeline-decoration {
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .timeline-decoration span {
+            font-size: 20px;
+            display: inline-block;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        /* Animaciones específicas para cada decoración */
+        .decoration-heart { animation-delay: 0.2s; color: #ff6b6b; }
+        .decoration-sparkle { animation-delay: 0.4s; }
+        .decoration-flower { animation-delay: 0.3s; color: #ff9ff3; }
+        .decoration-chocolate { animation-delay: 0.5s; }
+        .decoration-palm { animation-delay: 0.2s; color: #1dd1a1; }
+        .decoration-sun { animation-delay: 0.4s; color: #feca57; }
+        .decoration-camera { animation-delay: 0.6s; }
+        .decoration-balloon { animation-delay: 0.3s; color: #5f27cd; }
+        .decoration-couple { animation-delay: 0.5s; color: #ff6b6b; }
+        .decoration-firework { animation-delay: 0.7s; color: #ff9f43; }
+        
+        /* Botón secreto */
+        .secret-button {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 100;
+            opacity: 0.3;
+            transition: all 0.3s;
+        }
+        
+        .secret-button:hover {
+            opacity: 1;
+            background: var(--color-primary);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- Lluvia de corazones -->
+    <div class="heart-rain" id="heart-rain"></div>
+    
+    <div class="container">
+        <h1>Feliz 1 año y 3 meses <span class="heart" id="magic-heart">❤</span></h1>
+        <p class="subtitle">Cada día a tu lado es un regalo del universo</p>
+        
+        <div class="counter">
+            Nuestro amor dura ya: <span id="days-together">456</span> días
+        </div>
+        
+        <div class="music-player">
+            <button id="play-btn">▶</button>
+            <div class="music-info">
+                <div class="music-title">Te dedico está canción</div>
+                <div class="music-artist">Espero que te guste mi amor</div>
+            </div>
+            <button id="volume-btn">🔊</button>
+        </div>
+        
+        <div class="message">
+            <style>
+                .letter-content p {
+                    text-align: justify;
+                }
+            </style>
+            <h2>Para la persona más especial de mi vida</h2>
+            <p>Desde aquel primer día, supe que contigo todo sería diferente. En estos 15 meses juntos, has llenado mi vida de alegría, amor y momentos inolvidables.</p>
+            <p>Cada risa, cada mirada, cada segundo a tu lado es un tesoro que guardo en mi corazón. Esta es solo una pequeña muestra de todo lo que hemos vivido juntos mi amor💑</p>
+            <p>Te amo mucho mi vida 💖</p>
+        </div>
+        
+        <!-- Timeline de momentos especiales -->
+        <div class="timeline">
+            <h2>Nuestra Historia</h2>
+            <div class="timeline-item left">
+                <div class="timeline-content">
+                    <div class="timeline-date", style="text-align: left;">Cuando comenzamos a hablarnos</div>
+                    <div class="timeline-icon">👀</div>
+                    <p style="text-align: justify;">En este día nuestras voces se encontraron por primera vez, no sabíamos que con esas palabras comenzaba algo tan bonito 
+                        como nuestra historia.
+                    </p>
+                    <div class="timeline-decoration">
+                        <span class="decoration-heart">💘</span>
+                        <span class="decoration-sparkle">✨</span>
+                    </div>
+                </div>
+            </div>
+            <div class="timeline-item right">
+                <div class="timeline-content">
+                    <div class="timeline-date", style="text-align: left;">El comienzo de nuestra hermosa historia</div>
+                    <div class="timeline-icon">💑</div>
+                    <p style="text-align: justify;">Ese día tomé valor y te abrí mi corazón, aunque no estábamos frente a frente lo que sentí fue real y mágico. 
+                        Desde ese momento, empenzó nuestra historia; una historia tan hermosa. 
+                    </p>
+                    <div class="timeline-decoration">
+                        <span class="decoration-flower">🌸</span>
+                        <span class="decoration-chocolate">🍫</span>
+                    </div>
+                </div>
+            </div>
+            <div class="timeline-item left">
+                <div class="timeline-content">
+                    <div class="timeline-date", style="text-align: left;">Nuestra primera cita</div>
+                    <div class="timeline-icon">✈️</div>
+                    <p style="text-align: justify;">Ese día fue simplemente hermoso, los dos estábamos nerviosos por vernos después de un tiempo, pero en cuanto nos miramos,
+                        sentimos una conexión única. Recuerdo perfectamente lo hermosa que te veías ese día con tu vestidito negro de mariposas amarillas.
+                    </p>
+                    <div class="timeline-decoration">
+                        <span class="decoration-palm">🌴</span>
+                        <span class="decoration-sun">☀️</span>
+                        <span class="decoration-camera">📸</span>
+                    </div>
+                </div>
+            </div>
+            <div class="timeline-item right">
+                <div class="timeline-content">
+                    <div class="timeline-date", style="text-align: left;">Nuestros aniversarios</div>
+                    <div class="timeline-icon">🎉</div>
+                    <p style="text-align: justify;"> Cada aniversario ha sido especial a su manera, a veces con planes sencillos, otras con momentos inesperados 
+                        pero siempre juntos, riéndonos, abrazándonos, y recordando por qué elegimos seguir el uno al lado del otro. No importa cómo, siempre logramos que sea bonito, 
+                        porque lo más importante es que lo vivimos contigo.
+                    </p>
+                    <div class="timeline-decoration">
+                        <span class="decoration-balloon">🎈</span>
+                        <span class="decoration-couple">💑</span>
+                        <span class="heart">❤</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <h2>Nuestros momentos</h2>
+        <div class="photo-gallery" id="gallery">
+            <img src="recuerdo1.jpeg" class="photo" alt="Nuestro momento" style="animation-delay: 0.1s">
+            <img src="recuerdo2.jpeg" class="photo" alt="Nuestro momento" style="animation-delay: 0.2s">
+            <img src="recuerdo3.jpeg" class="photo" alt="Nuestro momento" style="animation-delay: 0.3s">
+            <img src="recuerdo4.jpeg" class="photo" alt="Nuestro momento" style="animation-delay: 0.4s">
+            <img src="recuerdo5.jpeg" class="photo" alt="Nuestro momento" style="animation-delay: 0.5s">
+            <img src="recuerdo6.jpeg" class="photo" alt="Nuestro momento" style="animation-delay: 0.6s">
+            <img src="recuerdo7.jpeg" class="photo" alt="Nuestro momento" style="animation-delay: 0.7s">
+            <img src="recuerdo8.jpeg" class="photo" alt="Nuestro momento" style="animation-delay: 0.8s">
+            <img src="recuerdo9.jpeg" class="photo" alt="Nuestro momento" style="animation-delay: 0.9s">
+            <img src="recuerdo10.jpeg" class="photo" alt="Nuestro momento" style="animation-delay: 0.9s">
+            <img src="recuerdo11.jpeg" class="photo" alt="Nuestro momento" style="animation-delay: 0.9s">
+            <img src="recuerdo12.jpeg" class="photo" alt="Nuestro momento" style="animation-delay: 0.9s">
+            <img src="recuerdo13.jpeg" class="photo" alt="Nuestro momento" style="animation-delay: 0.9s">
+            <img src="recuerdo14.jpeg" class="photo" alt="Nuestro momento" style="animation-delay: 0.9s">
+            <img src="recuerdo15.jpeg" class="photo" alt="Nuestro momento" style="animation-delay: 0.9s">
+        </div>
+        
+        <!-- Juego de memoria -->
+        <div class="memory-game-container">
+            <h2>Un pequeño juego de memoria jijij</h2>
+            <p>Encuentra las parejas de fotos para revelar un mensaje secreto</p>
+            <div class="memory-game" id="memory-game">
+                <!-- Las cartas se generarán con JavaScript -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- Carta de amor flotante -->
+    <div class="love-letter" id="love-letter">
+        💌
+    </div>
+    
+    <!-- Modal para la carta de amor -->
+    <div class="letter-modal" id="letter-modal">
+        <style>
+            .letter-content p {
+                text-align: justify;
+            }
+        </style>
+        <div class="letter-content">
+            <span class="close-letter" id="close-letter">&times;</span>
+            <h2>Para ti, mi amor 💘</h2>
+            <p>Hoy celebramos 1 año y 3 meses de una historia que comenzó con una mirada y se convirtió en el capítulo más hermoso de mi vida.</p>
+            <p>Recuerdo la primera vez que te vi, cómo tu sonrisa iluminó todo a tu alrededor. Desde entonces, cada día a tu lado ha sido una aventura llena de amor, risas y momentos que atesoro en mi corazón.</p>
+            <p>Eres mi confidente, mi compañera de aventuras, mi razón para sonreír incluso en los días grises. Contigo he descubierto un amor que no conocía, uno que es paciente, comprensivo y lleno de magia.</p>
+            <p>En estos 15 meses hemos construido recuerdos que guardaré para siempre: nuestras largas conversaciones, los días de películas, las salidas que hemos tenido juntos, los silencios cómplices y cada te amo que hemos compartido.</p>
+            <p>Esta página es solo un pequeño reflejo de todo lo que siento por ti, porque las palabras a veces se quedan cortas para expresar la felicidad que me das.</p>
+            <p>Prometo seguir amándote cada día, acompañarte en cada paso y construir juntos un futuro tan brillante como tu sonrisa.</p>
+            <p>Feliz aniversario, mi amor bello. Que esta sea solo una de las muchas celebraciones que compartiremos juntos mi amorcito bello.</p>
+            <p><h2>Yo, Yai te ama con todas tus fuerzas mi princesa hermosa 💑💘</p></h2>
+        </div>
+    </div>
+    
+    <!-- Modal para fotos -->
+    <div id="image-modal" class="modal">
+        <span class="close">&times;</span>
+        <img class="modal-content" id="modal-image">
+    </div>
+    
+    <footer>
+        Hecho con mucho amor para ti mi amorcito bello <span class="heart">❤</span>
+    </footer>
+    
+    <!-- Botón secreto para efectos especiales -->
+    <button class="secret-button" id="secret-btn">✨</button>
+    
+    <script>
+        // Calcula los días juntos
+        const startDate = new Date('2024-01-16'); 
+        const today = new Date();
+        const diffTime = Math.abs(today - startDate);
+        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)); 
+        document.getElementById('days-together').textContent = diffDays;
+        
+        // Modal para las fotos
+        const modal = document.getElementById("image-modal");
+        const modalImg = document.getElementById("modal-image");
+        const photos = document.querySelectorAll('.photo');
+        
+        photos.forEach(photo => {
+            photo.addEventListener('click', function() {
+                modal.style.display = "block";
+                modalImg.src = this.src;
+            });
+        });
+        
+        document.querySelector('.close').addEventListener('click', function() {
+            modal.style.display = "none";
+        });
+        
+        // Cierra el modal al hacer clic fuera
+        window.addEventListener('click', function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        });
+        
+        // Reproductor de música interactivo
+        const audio = new Audio('fondo.mp3'); // Archivo de música corregido
+        audio.volume = 0.3;
+        
+        const playBtn = document.getElementById('play-btn');
+        const volumeBtn = document.getElementById('volume-btn');
+        let isPlaying = false;
+        let isMuted = false;
+        
+        // Intenta reproducir automáticamente (puede que necesite interacción del usuario)
+        document.addEventListener('DOMContentLoaded', function() {
+            const playPromise = audio.play();
+            
+            if (playPromise !== undefined) {
+                playPromise.then(_ => {
+                    isPlaying = true;
+                    playBtn.textContent = "⏸";
+                })
+                .catch(error => {
+                    // La reproducción automática falló
+                    console.log("Reproducción automática prevenida");
+                });
+            }
+        });
+        
+        playBtn.addEventListener('click', function() {
+            if (isPlaying) {
+                audio.pause();
+                playBtn.textContent = "▶";
+            } else {
+                audio.play();
+                playBtn.textContent = "⏸";
+            }
+            isPlaying = !isPlaying;
+        });
+        
+        volumeBtn.addEventListener('click', function() {
+            if (isMuted) {
+                audio.volume = 0.3;
+                volumeBtn.textContent = "🔊";
+            } else {
+                audio.volume = 0;
+                volumeBtn.textContent = "🔇";
+            }
+            isMuted = !isMuted;
+        });
+        
+        // Carta de amor interactiva
+        const loveLetter = document.getElementById('love-letter');
+        const letterModal = document.getElementById('letter-modal');
+        const closeLetter = document.getElementById('close-letter');
+        
+        loveLetter.addEventListener('click', function() {
+            letterModal.style.display = "flex";
+            createHearts(20);
+        });
+        
+        closeLetter.addEventListener('click', function() {
+            letterModal.style.display = "none";
+        });
+        
+        // Juego de memoria
+        const memoryGame = document.getElementById('memory-game');
+        const memoryCards = [
+            { emoji: "❤", matched: false },
+            { emoji: "❤", matched: false },
+            { emoji: "😊", matched: false },
+            { emoji: "😊", matched: false },
+            { emoji: "💑", matched: false },
+            { emoji: "💑", matched: false },
+            { emoji: "🌹", matched: false },
+            { emoji: "🌹", matched: false }
+        ];
+        
+        let hasFlippedCard = false;
+        let lockBoard = false;
+        let firstCard, secondCard;
+        let matchedPairs = 0;
+        
+        // Barajar cartas
+        memoryCards.sort(() => 0.5 - Math.random());
+        
+        // Crear tablero de juego
+        memoryCards.forEach((card, index) => {
+            const cardElement = document.createElement('div');
+            cardElement.classList.add('memory-card');
+            cardElement.dataset.index = index;
+            cardElement.addEventListener('click', flipCard);
+            memoryGame.appendChild(cardElement);
+        });
+        
+        function flipCard() {
+            if (lockBoard) return;
+            if (this === firstCard) return;
+            
+            this.classList.add('flipped');
+            this.textContent = memoryCards[this.dataset.index].emoji;
+            
+            if (!hasFlippedCard) {
+                // Primera carta
+                hasFlippedCard = true;
+                firstCard = this;
+                return;
+            }
+            
+            // Segunda carta
+            secondCard = this;
+            checkForMatch();
+        }
+        
+        function checkForMatch() {
+            const isMatch = memoryCards[firstCard.dataset.index].emoji === 
+                           memoryCards[secondCard.dataset.index].emoji;
+            
+            if (isMatch) {
+                disableCards();
+                matchedPairs++;
+                if (matchedPairs === memoryCards.length / 2) {
+                    setTimeout(() => {
+                        alert("¡Encontraste todas las parejas! Te amo más de lo que las palabras pueden expresar ❤");
+                    }, 500);
+                }
+            } else {
+                unflipCards();
+            }
+        }
+        
+        function disableCards() {
+            firstCard.classList.add('matched');
+            secondCard.classList.add('matched');
+            memoryCards[firstCard.dataset.index].matched = true;
+            memoryCards[secondCard.dataset.index].matched = true;
+            
+            resetBoard();
+        }
+        
+        function unflipCards() {
+            lockBoard = true;
+            
+            setTimeout(() => {
+                firstCard.classList.remove('flipped');
+                secondCard.classList.remove('flipped');
+                firstCard.textContent = '';
+                secondCard.textContent = '';
+                
+                resetBoard();
+            }, 1000);
+        }
+        
+        function resetBoard() {
+            [hasFlippedCard, lockBoard] = [false, false];
+            [firstCard, secondCard] = [null, null];
+        }
+        
+        // Corazón mágico
+        const magicHeart = document.getElementById('magic-heart');
+        magicHeart.addEventListener('click', function() {
+            createHearts(30);
+            this.style.animation = 'heartExplode 0.5s forwards';
+            setTimeout(() => {
+                this.style.animation = 'pulse 1.5s infinite';
+            }, 500);
+        });
+        
+        // Lluvia de corazones
+        function createHearts(count) {
+            const heartRain = document.getElementById('heart-rain');
+            
+            for (let i = 0; i < count; i++) {
+                const heart = document.createElement('div');
+                heart.classList.add('heart-flake');
+                heart.innerHTML = '❤';
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.fontSize = (Math.random() * 20 + 10) + 'px';
+                heart.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                heart.style.animationDelay = Math.random() * 2 + 's';
+                heart.style.opacity = Math.random();
+                
+                heartRain.appendChild(heart);
+                
+                // Eliminar después de la animación
+                setTimeout(() => {
+                    heart.remove();
+                }, 5000);
+            }
+        }
+        
+        // Botón secreto para confeti
+        const secretBtn = document.getElementById('secret-btn');
+        secretBtn.addEventListener('click', function() {
+            createConfetti();
+            this.textContent = "❤";
+            setTimeout(() => {
+                this.textContent = "✨";
+            }, 1000);
+        });
+        
+        function createConfetti() {
+            const colors = ['#ff6b6b', '#ffa3a3', '#d23669', '#ffb8b8', '#ff8e8e'];
+            
+            for (let i = 0; i < 100; i++) {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.width = (Math.random() * 10 + 5) + 'px';
+                confetti.style.height = (Math.random() * 10 + 5) + 'px';
+                confetti.style.opacity = Math.random();
+                confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+                confetti.style.animation = `fall ${Math.random() * 3 + 2}s linear forwards`;
+                
+                document.body.appendChild(confetti);
+                
+                setTimeout(() => {
+                    confetti.remove();
+                }, 3000);
+            }
+        }
+        
+        // Iniciar algunos corazones al cargar
+        window.addEventListener('load', function() {
+            createHearts(15);
+            
+            // Animación escalonada para las fotos
+            const photos = document.querySelectorAll('.photo');
+            photos.forEach((photo, index) => {
+                photo.style.animation = `popIn 0.6s forwards ${index * 0.1 + 1.8}s`;
+            });
+        });
+    </script>
+</body>
+</html>
